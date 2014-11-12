@@ -56,6 +56,23 @@ def insert_user(uid, username):
     db_cursor.execute('INSERT INTO user (id, name) VALUES (?, ?)', t)
     db_conn.commit()
 
+def fetch_contributors(repo, user_list):
+    contri = set()
+
+    if star.pushed_at == None:
+        return []
+
+    c_list = repo.get_contributors()
+    if c_list == None:
+        return []
+
+    for worker in c_list:
+        contri.add(worker.login)
+
+    contri = contri.intersection(user_list)
+
+    return list(contri)
+
 
 if __name__ == "__main__":
 
@@ -79,12 +96,11 @@ if __name__ == "__main__":
     all_repos = {}
     all_orgs = set()
 
-    api_cnt = 0
+
 
     user_cnt = 1
     for uname in t_users:
         user = GH.get_user(uname)
-        api_cnt += 1
         if user.type == 'User':
             insert_user(user_cnt, user.login)
             all_users[user.login] = {
@@ -106,7 +122,6 @@ if __name__ == "__main__":
         user = all_users[login]['obj']
         print '@' + login
 
-        api_cnt += 1
         starred = user.get_starred()
         print '\tstars: '
 
@@ -114,15 +129,10 @@ if __name__ == "__main__":
 
             if star.full_name not in all_repos:
                 contri = set()
-                api_cnt += 1
                 print '\t\tfetching ' + star.full_name
-                c_list = star.get_contributors()
-                if c_list == None:
-                    continue
-                for worker in c_list:
-                    contri.add(worker.login)
-                contri = contri.intersection(all_users_list)
-                all_repos[star.full_name] = list(contri)
+
+                all_repos[star.full_name] = fetch_contributors(star, all_users_list)
+
             print '\t\t' + star.full_name + ' => #contributors: ' + str(len(all_repos[star.full_name]))
 
             inter = all_repos[star.full_name]
@@ -133,24 +143,17 @@ if __name__ == "__main__":
                     insert_star_link(src_id, dst_id, star.full_name)
                     print '\t\t\tlinks to ' + tar
 
-        api_cnt += 1
         u_repos = user.get_repos()
         print '\trepos: '
 
         for repo in u_repos:
             if repo.full_name not in all_repos:
-                contri = set()
-                api_cnt += 1
-                c_list = repo.get_contributors()
-                if c_list == None:
-                    continue
-                for worker in c_list:
-                    contri.add(worker.login)
-                contri = contri.intersection(all_users_list)
-                all_repos[repo.full_name] = list(contri)
+                all_repos[repo.full_name] = fetch_contributors(repo, all_users_list)
+
             print '\t\t' + repo.full_name + ' => #contributors: ' + str(len(all_repos[repo.full_name]))
 
-        print 'API calls: ' + str(api_cnt)
+        rate_t = GH.rate_limiting
+        print '---------- API calls: ' + str(rate_t[0]) + ' / ' + str(rate_t[1]) + '----------'
 
     for login in all_users:
         user = all_users[login]['obj']
@@ -167,18 +170,14 @@ if __name__ == "__main__":
                 print '\t\t\trepos: '
                 for repo in o_repos:
                     if repo.full_name not in all_repos:
-                        contri = set()
-                        api_cnt += 1
-                        c_list = repo.get_contributors()
-                        if c_list == None:
-                            continue
-                        for worker in c_list:
-                            contri.add(worker.login)
-                        contri = contri.intersection(all_users_list)
-                        all_repos[repo.full_name] = list(contri)
+                        all_repos[repo.full_name] = fetch_contributors(repo, all_users_list)
+
                     print '\t\t\t\t' + repo.full_name + ' => #contributors: ' + str(len(all_repos[repo.full_name]))
 
                 all_orgs.add(org.login)
+
+        rate_t = GH.rate_limiting
+        print '---------- API calls: ' + str(rate_t[0]) + ' / ' + str(rate_t[1]) + '----------'
 
     print '========================COWORK========================'
 
