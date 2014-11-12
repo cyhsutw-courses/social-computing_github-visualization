@@ -159,7 +159,7 @@ if __name__ == "__main__":
                 for repo in o_repos:
                     if repo.full_name not in all_repos:
                         contri = set()
-                        ap_cnt += 1
+                        api_cnt += 1
                         c_list = repo.get_contributors()
                         if c_list == None:
                             continue
