@@ -65,7 +65,7 @@ def fetch_contributors(repo, user_list):
         c_list = repo.get_contributors()
         if repo.push_at == None:
             return []
-    except Exception:
+    except:
         return []
 
     if c_list == None:
