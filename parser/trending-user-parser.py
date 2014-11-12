@@ -86,7 +86,6 @@ if __name__ == "__main__":
         user = GH.get_user(uname)
         api_cnt += 1
         if user.type == 'User':
-            all_users.append(user.login)
             insert_user(user_cnt, user.login)
             all_users[user.login] = {
                 'id':user_cnt,
