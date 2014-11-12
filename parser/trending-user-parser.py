@@ -94,8 +94,7 @@ if __name__ == "__main__":
             all_users_list.add(user.login)
             user_cnt += 1
 
-    with open('../output/user_list.json', 'w') as output:
-        json.dump(all_users, output)
+    
 
     print '#user = ' + str(len(all_users))
 
