@@ -94,13 +94,13 @@ if __name__ == "__main__":
             all_users_list.add(user.login)
             user_cnt += 1
 
-    
+
 
     print '#user = ' + str(len(all_users))
 
     print '=========================STAR========================='
     for login in all_users:
-        user = all_users[login]
+        user = all_users[login]['obj']
         print '@' + login
 
         api_cnt += 1
