@@ -146,6 +146,11 @@ if __name__ == "__main__":
                 all_repos[repo.full_name] = list(contri)
             print '\t\t' + repo.full_name + ' => #contributors: ' + str(len(all_repos[repo.full_name]))
 
+        print 'API calls: ' + str(api_cnt)
+
+    for login in all_users:
+        user = all_users[login]['obj']
+        print '@' + login
         api_cnt += 1
         orgs = user.get_orgs()
         print '\torgs: '
@@ -170,10 +175,6 @@ if __name__ == "__main__":
                     print '\t\t\t\t' + repo.full_name + ' => #contributors: ' + str(len(all_repos[repo.full_name]))
 
                 all_orgs.add(org.login)
-        print 'API calls: ' + str(api_cnt)
-
-    with open('../output/repos.json', 'w') as f:
-        json.dump(all_repos, f)
 
     print '========================COWORK========================'
 
