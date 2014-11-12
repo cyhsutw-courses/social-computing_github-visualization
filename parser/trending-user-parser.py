@@ -115,6 +115,7 @@ if __name__ == "__main__":
             if star.full_name not in all_repos:
                 contri = set()
                 api_cnt += 1
+                print '\t\tfetching ' + star.full_name
                 c_list = star.get_contributors()
                 if c_list == None:
                     continue
