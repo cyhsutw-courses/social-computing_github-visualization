@@ -59,10 +59,13 @@ def insert_user(uid, username):
 def fetch_contributors(repo, user_list):
     contri = set()
 
-    if star.pushed_at == None:
+
+    c_list = None
+    try:
+        c_list = repo.get_contributors()
+    except Exception:
         return []
 
-    c_list = repo.get_contributors()
     if c_list == None:
         return []
 
@@ -130,7 +133,7 @@ if __name__ == "__main__":
             if star.full_name not in all_repos:
                 contri = set()
                 print '\t\tfetching ' + star.full_name
-
+                try:
                 all_repos[star.full_name] = fetch_contributors(star, all_users_list)
 
             print '\t\t' + star.full_name + ' => #contributors: ' + str(len(all_repos[star.full_name]))
@@ -142,6 +145,11 @@ if __name__ == "__main__":
                     dst_id = all_users[tar]['id']
                     insert_star_link(src_id, dst_id, star.full_name)
                     print '\t\t\tlinks to ' + tar
+
+        print '---------- API calls: ' + str(rate_t[0]) + ' / ' + str(rate_t[1]) + '----------'
+        if rate_t[0] <= 800:
+            print 'RUNNING OUT OF QUOTA...'
+            GH = auth()
 
         u_repos = user.get_repos()
         print '\trepos: '
