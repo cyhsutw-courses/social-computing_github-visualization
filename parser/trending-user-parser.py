@@ -103,6 +103,8 @@ if __name__ == "__main__":
             if star.full_name not in all_repos:
                 contri = set()
                 c_list = star.get_contributors()
+                if c_list == None:
+                    continue
                 for worker in c_list:
                     contri.add(worker.login)
                 contri = contri.intersection(all_users)
@@ -124,7 +126,10 @@ if __name__ == "__main__":
         for repo in u_repos:
             if repo.full_name not in all_repos:
                 contri = set()
-                for worker in repo.get_contributors():
+                c_list = repo.get_contributors()
+                if c_list == None:
+                    continue
+                for worker in c_list:
                     contri.add(worker.login)
                 contri = contri.intersection(all_users)
                 all_repos[repo.full_name] = list(contri)
@@ -142,7 +147,10 @@ if __name__ == "__main__":
                 for repo in o_repos:
                     if repo.full_name not in all_repos:
                         contri = set()
-                        for worker in repo.get_contributors():
+                        c_list = repo.get_contributors()
+                        if c_list == None:
+                            continue
+                        for worker in c_list:
                             contri.add(worker.login)
                         contri = contri.intersection(all_users)
                         all_repos[repo.full_name] = list(contri)
