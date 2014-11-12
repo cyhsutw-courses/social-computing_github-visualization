@@ -74,8 +74,8 @@ if __name__ == "__main__":
         t_users = t_users.union(set(ulist))
 
 
-    all_users = set()
-    all_users_list = []
+    all_users = {}
+    all_users_list = set()
     all_repos = {}
     all_orgs = set()
 
