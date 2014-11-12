@@ -115,7 +115,7 @@ if __name__ == "__main__":
     print '#user = ' + str(len(all_users))
 
     with open('../output/user.json', 'w') as f:
-        json.dump(list(all_users_list), f)
+        json.dump(all_users, f)
 
     print '=========================STAR========================='
     for login in all_users:
@@ -185,14 +185,19 @@ if __name__ == "__main__":
             print 'RUNNING OUT OF QUOTA...'
             GH = auth()
 
+    with open('../output/repos.json', 'w') as f:
+        json.dump(all_repos, f)
+
     print '========================COWORK========================'
+
+
 
     for key in all_repos.keys():
         contributors = all_repos[key]
         for contributor in contributors:
             user_id = all_users[contributor]['id']
             insert_cowork_link(key, user_id)
-            print contributor.login + ' => ' + key
+            print contributor + ' => ' + key
 
 
 

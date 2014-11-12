@@ -55,14 +55,14 @@ onload = function(){
                     .append("line")
                 .attr("class", "link")
                 .style("stroke-width", function(d) {
-                    return d.value;
+                    return Math.sqrt(d.value);
                 });
 
       var node = svg.selectAll(".node")
           .data(graph.nodes)
         .enter().append("circle")
           .attr("class", "node")
-          .attr("r", function(d){ return 8.0; })
+          .attr("r", function(d){ return Math.sqrt(d.weight)*8.0; })
           .style("fill", function(d) { return color(d.group); })
           .call(force.drag);
 

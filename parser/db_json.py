@@ -2,7 +2,7 @@ import math
 import json
 import sqlite3
 
-db_conn = sqlite3.connect('../db/user.db')
+db_conn = sqlite3.connect('../db/objc.db')
 db_cursor = db_conn.cursor()
 
 nodes = []
@@ -41,7 +41,7 @@ for row in db_cursor.execute('SELECT * FROM user ORDER BY id ASC'):
         'name': row[1],
         'group': 1,
         'weight':float(cnt),
-        'fixed':True,
+        #'fixed':True,
         #'x':640+300*math.cos(2*math.pi*uid/21.0),
         #'y':400+300*math.sin(2*math.pi*uid/21.0)
     }
@@ -57,8 +57,8 @@ print list_len
 for i in range(list_len):
     node = sorted_nodes[i]
     node['weight'] = node['weight']/max_cnt
-    node['x'] = 640+300*math.cos(2*math.pi*i/list_len)
-    node['y'] = 400+300*math.sin(2*math.pi*i/list_len)
+    #node['x'] = 640+300*math.cos(2*math.pi*i/list_len)
+    #node['y'] = 400+300*math.sin(2*math.pi*i/list_len)
     node_map[node['idx']] = i
 
 for link in links.values():
