@@ -35,7 +35,7 @@ def auth():
     uname = raw_input('Github username: ')
     passwd = getpass.getpass('Github password: ')
 
-    gh = Github(uname, passwd)
+    gh = Github(login_or_token=uname, password=passwd, per_page=100)
 
     return gh
 
@@ -161,16 +161,14 @@ if __name__ == "__main__":
             GH = auth()
 
     for login in all_users:
-        user = all_users[login]['obj']
+        user = GH.get_user(login)
         print '@' + login
-        api_cnt += 1
         orgs = user.get_orgs()
         print '\torgs: '
         for org in orgs:
             print '\t\t' + org.login
 
             if org.login not in all_orgs:
-                api_cnt += 1
                 o_repos = org.get_repos()
                 print '\t\t\trepos: '
                 for repo in o_repos:
