@@ -96,7 +96,8 @@ if __name__ == "__main__":
     all_repos = {}
     all_orgs = set()
 
-
+    rate_t = GH.rate_limiting
+    print '---------- API calls: ' + str(rate_t[0]) + ' / ' + str(rate_t[1]) + '----------'
 
     user_cnt = 1
     for uname in t_users:
@@ -104,8 +105,7 @@ if __name__ == "__main__":
         if user.type == 'User':
             insert_user(user_cnt, user.login)
             all_users[user.login] = {
-                'id':user_cnt,
-                'obj': user
+                'id':user_cnt
             }
             all_users_list.add(user.login)
             user_cnt += 1
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     print '=========================STAR========================='
     for login in all_users:
-        user = all_users[login]['obj']
+        user = GH.get_user(login)
         print '@' + login
 
         starred = user.get_starred()
@@ -154,6 +154,9 @@ if __name__ == "__main__":
 
         rate_t = GH.rate_limiting
         print '---------- API calls: ' + str(rate_t[0]) + ' / ' + str(rate_t[1]) + '----------'
+        if rate_t[0] <= 800:
+            print 'RUNNING OUT OF QUOTA...'
+            GH = auth()
 
     for login in all_users:
         user = all_users[login]['obj']
@@ -178,6 +181,9 @@ if __name__ == "__main__":
 
         rate_t = GH.rate_limiting
         print '---------- API calls: ' + str(rate_t[0]) + ' / ' + str(rate_t[1]) + '----------'
+        if rate_t[0] <= 800:
+            print 'RUNNING OUT OF QUOTA...'
+            GH = auth()
 
     print '========================COWORK========================'
 
