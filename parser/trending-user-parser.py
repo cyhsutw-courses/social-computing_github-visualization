@@ -133,7 +133,6 @@ if __name__ == "__main__":
             if star.full_name not in all_repos:
                 contri = set()
                 print '\t\tfetching ' + star.full_name
-                try:
                 all_repos[star.full_name] = fetch_contributors(star, all_users_list)
 
             print '\t\t' + star.full_name + ' => #contributors: ' + str(len(all_repos[star.full_name]))
