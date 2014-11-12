@@ -57,26 +57,21 @@ def insert_user(uid, username):
     db_conn.commit()
 
 def fetch_contributors(repo, user_list):
+    print '\t\tfetching ' + repo.full_name
     contri = set()
-
-
-    c_list = None
     try:
         c_list = repo.get_contributors()
-        if repo.pushed_at == None:
-            return []
+        for worker in c_list:
+            contri.add(worker.login)
+
+        contri = contri.intersection(user_list)
+
+        return list(contri)
     except:
-        return []
+        print '==========EXCEPTION!=========='
+        return list(contri)
 
-    if c_list == None:
-        return []
 
-    for worker in c_list:
-        contri.add(worker.login)
-
-    contri = contri.intersection(user_list)
-
-    return list(contri)
 
 
 if __name__ == "__main__":
@@ -133,8 +128,6 @@ if __name__ == "__main__":
         for star in starred:
 
             if star.full_name not in all_repos:
-                contri = set()
-                print '\t\tfetching ' + star.full_name
                 all_repos[star.full_name] = fetch_contributors(star, all_users_list)
 
             print '\t\t' + star.full_name + ' => #contributors: ' + str(len(all_repos[star.full_name]))
