@@ -74,16 +74,26 @@ if __name__ == "__main__":
         t_users = t_users.union(set(ulist))
 
 
-    all_users = []
+    all_users = set()
+    all_users_list = []
     all_repos = {}
     all_orgs = set()
 
+    api_cnt = 0
+
+    user_cnt = 1
     for uname in t_users:
         user = GH.get_user(uname)
+        api_cnt += 1
         if user.type == 'User':
             all_users.append(user.login)
-            userid = len(all_users)
-            insert_user(userid, user.login)
+            insert_user(user_cnt, user.login)
+            all_users[user.login] = {
+                'id':user_cnt,
+                'obj': user
+            }
+            all_users_list.add(user.login)
+            user_cnt += 1
 
     with open('../output/user_list.json', 'w') as output:
         json.dump(all_users, output)
@@ -92,9 +102,10 @@ if __name__ == "__main__":
 
     print '=========================STAR========================='
     for login in all_users:
-        user = GH.get_user(login)
+        user = all_users[login]
         print '@' + login
 
+        api_cnt += 1
         starred = user.get_starred()
         print '\tstars: '
 
@@ -102,62 +113,66 @@ if __name__ == "__main__":
 
             if star.full_name not in all_repos:
                 contri = set()
+                api_cnt += 1
                 c_list = star.get_contributors()
                 if c_list == None:
                     continue
                 for worker in c_list:
                     contri.add(worker.login)
-                contri = contri.intersection(all_users)
+                contri = contri.intersection(all_users_list)
                 all_repos[star.full_name] = list(contri)
             print '\t\t' + star.full_name + ' => #contributors: ' + str(len(all_repos[star.full_name]))
 
             inter = all_repos[star.full_name]
             for tar in inter:
                 if tar != login:
-                    src_id = all_users.index(login)+1
-                    dst_id = all_users.index(tar)+1
+                    src_id = all_users[login]['id']
+                    dst_id = all_users[tar]['id']
                     insert_star_link(src_id, dst_id, star.full_name)
                     print '\t\t\tlinks to ' + tar
 
-
+        api_cnt += 1
         u_repos = user.get_repos()
         print '\trepos: '
 
         for repo in u_repos:
             if repo.full_name not in all_repos:
                 contri = set()
+                api_cnt += 1
                 c_list = repo.get_contributors()
                 if c_list == None:
                     continue
                 for worker in c_list:
                     contri.add(worker.login)
-                contri = contri.intersection(all_users)
+                contri = contri.intersection(all_users_list)
                 all_repos[repo.full_name] = list(contri)
             print '\t\t' + repo.full_name + ' => #contributors: ' + str(len(all_repos[repo.full_name]))
 
-
+        api_cnt += 1
         orgs = user.get_orgs()
         print '\torgs: '
         for org in orgs:
             print '\t\t' + org.login
 
             if org.login not in all_orgs:
+                api_cnt += 1
                 o_repos = org.get_repos()
                 print '\t\t\trepos: '
                 for repo in o_repos:
                     if repo.full_name not in all_repos:
                         contri = set()
+                        ap_cnt += 1
                         c_list = repo.get_contributors()
                         if c_list == None:
                             continue
                         for worker in c_list:
                             contri.add(worker.login)
-                        contri = contri.intersection(all_users)
+                        contri = contri.intersection(all_users_list)
                         all_repos[repo.full_name] = list(contri)
                     print '\t\t\t\t' + repo.full_name + ' => #contributors: ' + str(len(all_repos[repo.full_name]))
 
                 all_orgs.add(org.login)
-
+        print 'API calls: ' + str(api_cnt)
 
     with open('../output/repos.json', 'w') as f:
         json.dump(all_repos, f)
@@ -167,8 +182,8 @@ if __name__ == "__main__":
     for key in all_repos.keys():
         contributors = all_repos[key]
         for contributor in contributors:
-            user_id = all_users.index(contributor)+1
-            insert_cowork_link(repo.id, user_id)
+            user_id = all_users[contributor]['id']
+            insert_cowork_link(key, user_id)
             print contributor.login + ' => ' + key
 
 
