@@ -99,7 +99,7 @@ if __name__ == "__main__":
     print '#user = ' + str(len(all_users))
 
     with open('../output/user.json', 'w') as f:
-        json.dump(list(all_user_list), f)
+        json.dump(list(all_users_list), f)
 
     print '=========================STAR========================='
     for login in all_users:
